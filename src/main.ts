@@ -2,4 +2,8 @@ import { createApp } from 'vue'
 import "./main.css"
 import App from './App.vue'
 
-createApp(App).mount('#app')
+import PrimeVue from 'primevue/config';
+
+createApp(App)
+    .use(PrimeVue)
+    .mount('#app')

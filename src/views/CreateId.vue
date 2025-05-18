@@ -1,9 +1,9 @@
 <template>
     <div v-if="currentMenu == 'generate-id'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-md relative">
+        <div class="bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-md relative">
             <!-- Close Button -->
             <button @click="close"
-                class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-white">
+                class="absolute top-2 right-2 text-gray-500 hover:text-white">
                 ✖
             </button>
 
@@ -12,20 +12,27 @@
             <!-- Input for id name -->
             <label class="block mb-2 text-sm font-medium">Username</label>
             <input v-model="username" placeholder="Enter username"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500">
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-600">
 
             <!-- Input for passphrase -->
             <label class="block mb-2 text-sm font-medium">Passphrase</label>
             <input v-model="passphrase" type="password" placeholder="Enter passphrase"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" />
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-600" />
 
+            <!-- Generating WIP... -->
+            <span v-if="generate_running" class="block mt-2 p-1 text-center w-full rounded-lg bg-blue-800">Generating your ID keys...</span>
+            
             <!-- Buttons -->
             <div class="mt-6 flex justify-end gap-2">
                 <button @click="close"
-                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600">
+                    class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600">
                     Cancel
                 </button>
-                <button @click="" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+
+                <button @click="generate()"
+                    :class="[ 'px-4 py-2 rounded-lg  text-white ',
+                    !credentials_good() || generate_running ? 'bg-gray-700 hover:bg-gray-600' : 'bg-blue-600 hover:bg-blue-800' 
+                    ]" >
                     Generate
                 </button>
             </div>
@@ -33,11 +40,33 @@
     </div>
 </template>
 
-<script setup>
-import { ref, vModelRadio } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { currentMenu, setMenu } from '../state.ts';
+import { generate_new_identity } from '../logic/crypto.ts'
+import { IdentitiesDB } from '../logic/local-data.ts';
 
 const passphrase = ref('')
+const username = ref('')
+
+const generate_running = ref(false);
+
+
+function credentials_good() :Boolean{
+    return !(username.value == '' || passphrase.value.length < 4)
+}
+
+async function generate(){
+    if(!credentials_good() || generate_running.value) return;
+    generate_running.value = true;
+
+    const encrypted_id = await generate_new_identity(passphrase.value);
+
+    await IdentitiesDB.addItem(username.value, encrypted_id);
+    
+    generate_running.value = false;
+    close();
+}
 
 function close() {
     setMenu('home');
