@@ -1,9 +1,9 @@
-import { type ExportedIdentity } from './crypto.ts'
+import { type ExportedOwnedIdentity } from '../schema/export/id'
 
 export namespace IdentitiesDB{
     export interface Entry{
         label :string;
-        identity :ExportedIdentity
+        identity :ExportedOwnedIdentity
     }
 
     // Step 1: Open or create the DB
@@ -25,7 +25,7 @@ export namespace IdentitiesDB{
     }
     
     
-    export async function addItem(label :string, identity :ExportedIdentity) {
+    export async function addItem(label :string, identity :ExportedOwnedIdentity) {
         const db = await openDB();
         const tx = db.transaction("identities", "readwrite");
         const store = tx.objectStore("identities");
