@@ -5,7 +5,12 @@ import type { ExportedMessage } from "../../schema/export/message";
 
 
 export async function get_messages(server: string, uid: ExportedIdentity) :Promise<any | null>{
-    const res = await axios.get(server + '/message' + btoa(JSON.stringify(uid)));
+    const res = await axios.get(server + '/message', {
+        params: {
+            recipient: btoa(JSON.stringify(uid))
+        }
+    });
+
     if(res.status != 200){
         return null;
     }

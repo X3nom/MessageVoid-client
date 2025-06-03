@@ -12,8 +12,6 @@ export interface ExportedOwnedIdentity{
     };
 }
 export interface ExportedIdentity{
-    pub_keys: {
-        enc: JsonWebKey;
-        sign: JsonWebKey;
-    };
+    enc: JsonWebKey;
+    sign: JsonWebKey;
 }

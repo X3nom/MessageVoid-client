@@ -44,7 +44,7 @@
 import { ref } from 'vue';
 import { router } from '../main.ts';
 import { generate_new_identity } from '../logic/crypto/id.ts'
-import { IdentitiesDB } from '../logic/local-data.ts';
+import { db } from '../logic/connectors/local-db.ts';
 
 const passphrase = ref('');
 const username = ref('');
@@ -62,7 +62,7 @@ async function generate(){
 
     const encrypted_id = await generate_new_identity(passphrase.value);
 
-    await IdentitiesDB.addItem(username.value, encrypted_id);
+    await db.identities.put({label: username.value, identity: encrypted_id});
     
     generate_running.value = false;
     close();

@@ -9,10 +9,17 @@ import SelectId from './views/SelectId.vue';
 import CreateId from './views/CreateId.vue';
 
 import { createRouter, createWebHistory } from 'vue-router'
+import NewestMessagesPanel from './components/NewestMessagesPanel.vue';
+import ChatPanel from './components/ChatPanel.vue';
 
 
 const routes = [
-  { path: '/', component: Home },
+  { path: '/', component: Home, 
+    children: [
+      {path: '/newest', component: NewestMessagesPanel},
+      {path: '/chat', component: ChatPanel}
+    ]
+  },
   { path: '/select-id', component: SelectId },
   { path: '/create-id', component: CreateId }
 ]

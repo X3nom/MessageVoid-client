@@ -1,5 +1,5 @@
-import { type ExportedOwnedIdentity } from "../../schema/export/id";
-import { type OwnedUserID } from "../../schema/inner/id";
+import { type ExportedIdentity, type ExportedOwnedIdentity } from "../../schema/export/id";
+import { type OwnedUserID, type UserID } from '../../schema/inner/id';
 import { passwd_encrypt, passwd_decrypt } from "./passwd-encrypt";
 import { type ExportedPasswdEncryptedData } from '../../schema/export/passwd-encrypt';
 
@@ -113,4 +113,11 @@ export async function import_identity(exported_id :ExportedOwnedIdentity, passph
         }
     };
     return imported_id;
+}
+
+export async function export_identity_pub(identity :UserID) :Promise<ExportedIdentity>{
+    return {
+        enc: await crypto.subtle.exportKey('jwk', identity.enc_key),
+        sign: await crypto.subtle.exportKey('jwk', identity.sign_key)
+    }
 }

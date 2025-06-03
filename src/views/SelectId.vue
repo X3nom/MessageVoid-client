@@ -64,7 +64,7 @@
 import { ref } from 'vue';
 import { current_identity } from '../state.ts';
 import { BadDecryptionError, import_identity } from '../logic/crypto/id.ts';
-import { IdentitiesDB } from '../logic/local-data.ts';
+import { db, type IdentityEntry } from '../logic/connectors/local-db.ts';
 import { toSvg } from 'jdenticon';
 import Select from 'primevue/select';
 import { router } from '../main.ts';
@@ -81,7 +81,7 @@ function generate_new_id(){
 
 async function use_id(){
     if(selectedID.value == undefined) return;
-    
+    localStorage.getItem("last_selected_id");
     
     try{
         const imported_id = await import_identity(selectedID.value.identity, passphrase.value);
@@ -104,12 +104,13 @@ async function use_id(){
 
 
 async function load_ids_from_indexedDB(){
-    let all_ids :IdentitiesDB.Entry[] | any[] = await IdentitiesDB.listAllItems();
-    console.log(all_ids);
+    let all_ids = (await db.identities.toArray()).map(
+        (id) => ({
+            ...id,
+            identicon: toSvg(JSON.stringify(id.identity.pub_keys), 40)
+        })
+    );
 
-    for(let i=0; i<all_ids.length; i++){
-        all_ids[i].identicon = toSvg(JSON.stringify(all_ids[i].identity.pub_keys), 40);
-    }
     all_ID_list.value = all_ids;
 }
 load_ids_from_indexedDB();
