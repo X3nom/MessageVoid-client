@@ -1,32 +1,18 @@
 import Dexie, { type Table } from 'dexie';
-import { type ExportedIdentity, type ExportedOwnedIdentity } from '../../schema/export/id';
+import type { IdentityEntry, UserDataEntry } from '../../schema/db';
 
 
-export interface IdentityEntry {
-  id?: number; // optional because it's autoIncrement
-  label: string;
-  identity: ExportedOwnedIdentity;
-}
-
-
-export interface ChatCacheEntry {
-  id?: number;
-  chats: {
-    user: ExportedIdentity,
-    
-  }[]
-}
 
 
 class IdentitiesDB extends Dexie {
   identities!: Table<IdentityEntry, number>;
-  chat_cache!: Table<ChatCacheEntry, number>;
+  chat_cache!: Table<UserDataEntry, number>;
 
   constructor() {
     super('identitiesDB');
     this.version(1).stores({
       identities: '++id,id_label,identity',
-      chat_cache: 'id'
+      user_data: 'id, data'
     });
   }
 }

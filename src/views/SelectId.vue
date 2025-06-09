@@ -64,7 +64,7 @@
 import { ref } from 'vue';
 import { current_identity } from '../state.ts';
 import { BadDecryptionError, import_identity } from '../logic/crypto/id.ts';
-import { db, type IdentityEntry } from '../logic/connectors/local-db.ts';
+import { db } from '../logic/connectors/local-db.ts';
 import { toSvg } from 'jdenticon';
 import Select from 'primevue/select';
 import { router } from '../main.ts';
@@ -81,8 +81,8 @@ function generate_new_id(){
 
 async function use_id(){
     if(selectedID.value == undefined) return;
-    localStorage.getItem("last_selected_id");
-    
+    localStorage.setItem("last_selected_identity", selectedID.value.id);
+
     try{
         const imported_id = await import_identity(selectedID.value.identity, passphrase.value);
 
@@ -90,7 +90,7 @@ async function use_id(){
         current_identity.id = imported_id;
         current_identity.identicon = selectedID.value.identicon;
     
-        router.push('/')
+        router.push('/home')
     }
     catch(e){
         if(e == BadDecryptionError){ // Wrong password
@@ -113,7 +113,13 @@ async function load_ids_from_indexedDB(){
 
     all_ID_list.value = all_ids;
 }
-load_ids_from_indexedDB();
-// watch(currentMenu, load_ids_from_indexedDB); // when jumping to current menu, load the ids again
+load_ids_from_indexedDB().finally(()=>{
+    const last_selected_id = Number(localStorage.getItem('last_selected_identity'));
+    for(const ident of all_ID_list.value){
+        if(ident.id == last_selected_id) selectedID.value = ident;
+    }
+});
+
+
 
 </script>

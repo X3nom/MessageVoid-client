@@ -1,8 +1,22 @@
 # MessageVoid
-MessageVoid is an end-2-end encrypted mail / messaging platform with focus on anonymity.
+MessageVoid is an end-2-end encrypted mail / messaging platform with focus on anonymity, security and decentralization.
 
 There's no centralized user accounts.
 Instead, users are identified by their **globally unique** `UserID`.
+
+Every message that get's sent becomes "public knowledge" but is useful only to those, who hold decryption keys (only intended recipient) 
+  
+---
+
+
+- private parts of userIDs are stored locally, they should never ever leave the users device
+  - possibility to export userID?
+- list of known contacts is stored locally
+  - in UI, contacts show up looking like chats
+  - simple username $\rightarrow$ userID resolution by entering address such as *ex.* `hello~world.com` or `foo~77.245.34.145`
+    > resolution is "trust on first connect", only used once for fetching the recipient userID
+- newest messages panel $\rightarrow$ email inbox like view with newest fetched messages
+
 
 ## How does it work?
 `UserID` is an encryption keypair *(priv. key + pub. key)*. User is seen as the owner of private key of their public ID.
@@ -43,3 +57,5 @@ Suppose situation, where `user1` wants to send message `"hello world"` to `user2
 ### Cryptography details
 
 - `4096` bit RSA key
+
+
