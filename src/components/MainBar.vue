@@ -37,13 +37,13 @@
                 </MenuItem>
             </MenuItems>
         </Menu>
-        <MyIdDialog v-model:is_open="my_id_dialog_open"></MyIdDialog>
     </div>
+    <MyIdDialog v-model:is_open="my_id_dialog_open"></MyIdDialog>
 </template>
 
 <script setup lang='ts'>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-import MyIdDialog from './MyIdDialog.vue';
+import MyIdDialog from './dialogs/MyIdDialog.vue';
 
 import { is_blank } from '../logic/utilities/string';
 import { current_identity, current_server } from '../state';
@@ -52,7 +52,7 @@ import { router } from '../main';
 import { Tooltip } from 'primevue';
 
 function logout(){
-    current_identity.id = undefined;
+    current_identity.userId = undefined;
     current_identity.name = undefined;
     current_identity.identicon = undefined;
     router.push('/select-id');

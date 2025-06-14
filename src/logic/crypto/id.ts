@@ -2,6 +2,7 @@ import { type ExportedIdentity, type ExportedOwnedIdentity } from "../../schema/
 import { type OwnedUserID, type UserID } from '../../schema/inner/id';
 import { passwd_encrypt, passwd_decrypt } from "./passwd-encrypt";
 import { type ExportedPasswdEncryptedData } from '../../schema/export/passwd-encrypt';
+import { buffer2Base64, bufferFromBase64 } from '../utilities/buffer2Base64';
 
 
 export class BadDecryptionError extends Error{
@@ -80,7 +81,26 @@ async function decrypt_identity(encrypted_id :ExportedOwnedIdentity, passphrase 
 }
 
 
-export async function import_identity(exported_id :ExportedOwnedIdentity, passphrase: string) :Promise<OwnedUserID>{
+export async function import_identity(exported_id :ExportedIdentity) {
+    const imported_id :UserID = {
+        // public encryption key
+        enc_key: await crypto.subtle.importKey(
+            'jwk', 
+            (exported_id.enc as {enc: JsonWebKey, sign: JsonWebKey}).enc,
+            ENC_KEY_ALGORITHM, true, ['encrypt']
+        ),
+        // public signature key
+        sign_key: await crypto.subtle.importKey(
+            'jwk', 
+            (exported_id.sign as {enc: JsonWebKey, sign: JsonWebKey}).sign,
+            SIGN_KEY_ALGORITM, true, ['verify']
+        )
+    }
+    return imported_id;
+}
+
+
+export async function import_owned_identity(exported_id :ExportedOwnedIdentity, passphrase: string) :Promise<OwnedUserID>{
     const decrypted_id = await decrypt_identity(exported_id, passphrase);
     const imported_id :OwnedUserID = {
         pub_id: {
@@ -120,4 +140,20 @@ export async function export_identity_pub(identity :UserID) :Promise<ExportedIde
         enc: await crypto.subtle.exportKey('jwk', identity.enc_key),
         sign: await crypto.subtle.exportKey('jwk', identity.sign_key)
     }
+}
+
+
+
+export async function id_encrypt(content: string, enc_key :CryptoKey) {
+    const data_buff = new TextEncoder().encode(content);
+    const encrypted_buff = await crypto.subtle.encrypt(ENC_KEY_ALGORITHM, enc_key, data_buff);
+    const encrypted_b64 = buffer2Base64(encrypted_buff)
+    return encrypted_b64;
+}
+
+export async function id_decrypt(encrypted_b64:string, enc_key :CryptoKey) {
+    const data = bufferFromBase64(encrypted_b64);
+    const decrypted_buff = await crypto.subtle.decrypt(ENC_KEY_ALGORITHM, enc_key, data);
+    const content = new TextDecoder().decode(decrypted_buff);
+    return content;
 }

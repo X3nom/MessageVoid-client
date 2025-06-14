@@ -23,7 +23,7 @@ const messages = ref([]);
 
 async function load_messages(){
     messages.value = await get_messages(current_server.server, 
-        await export_identity_pub(current_identity.id!.pub_id)
+        await export_identity_pub(current_identity.userId!.pub_id)
     )
 }
 load_messages();

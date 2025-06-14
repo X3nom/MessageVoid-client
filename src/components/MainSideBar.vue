@@ -37,8 +37,8 @@
                     </DialogTitle>
                     <div class="flex flex-col w-full justify-center rounded-lg p-4 backdrop-blur-2xl bg-zinc-800">
                         <h2>name resolution address</h2>
-                        <input :placeholder="'foo&bar.com'" class="p-1 mt-4 mb-4 rounded-lg focus:outline-zinc-500 outline-2 outline-zinc-700">
-                        <button class="rounded-lg p-1 hover:bg-zinc-700">ok</button>
+                        <input v-model="name_res_addr" :placeholder="'foo&bar.com'" class="p-1 mt-4 mb-4 rounded-lg focus:outline-zinc-500 outline-2 outline-zinc-700">
+                        <button v-on:click="resolve(name_res_addr);" class="rounded-lg p-1 hover:bg-zinc-700">ok</button>
                     </div>
                 </DialogPanel>
             </TransitionChild>
@@ -55,20 +55,30 @@ import { RouterLink } from 'vue-router';
 import { ref } from 'vue';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot} from '@headlessui/vue';
 import { resolve_by_name } from '../logic/api/name-resolve-api';
+import { current_identity } from '../state';
+import { update_user_data } from '../logic/connectors/local-db';
 
 const known_recipients = ref([]);
 
 const add_contact_open = ref(false);
 
+const name_res_addr = ref('');
+
 
 async function resolve(address: string){
-    const [name, server] = address.split('&');
+    let [name, server] = address.split('&');
+    server = (server.includes('http://') || server.includes('https://'))? server : 'http://' + server
     const userid = await resolve_by_name(server, name);
-    console.log(userid);
+    
+    current_identity.user_data?.chats.push({
+        username: name,
+        userId: userid,
+        messages: []
+    });
+    await update_user_data(current_identity.db_id!, current_identity.user_data!, current_identity.userId!);
 }
 
 
-for(let i=0; i<200; i++){
-}
+
 
 </script>

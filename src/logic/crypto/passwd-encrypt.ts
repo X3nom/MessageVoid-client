@@ -1,20 +1,5 @@
 import type { ExportedPasswdEncryptedData } from "../../schema/export/passwd-encrypt";
-
-
-function buffer2Base64(buffer: ArrayBuffer): string {
-    return btoa(String.fromCharCode(...new Uint8Array(buffer)));
-}
-
-function bufferFromBase64(base64: string): ArrayBuffer {
-    const binary = atob(base64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes.buffer;
-}
-
-
+import { buffer2Base64, bufferFromBase64 } from "../utilities/buffer2Base64";
 
 
 async function deriveKey(password :string) {

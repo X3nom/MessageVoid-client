@@ -5,7 +5,7 @@ export interface Message{
     recipient: UserID;
     send_time: number;
     enc_key: string;
-    return_enc_key: string; 
+    sender_enc_key: string;
     enc_data: string;
 };
 

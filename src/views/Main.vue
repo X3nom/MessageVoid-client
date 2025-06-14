@@ -15,7 +15,7 @@ import { router } from '../main.ts';
 import { RouterView } from 'vue-router';
 
 // If no identity selected, force the user out
-if(current_identity.id == undefined){
+if(current_identity.userId == undefined){
     router.replace('/select-id');
 }
 else{

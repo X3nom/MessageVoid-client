@@ -44,7 +44,7 @@
             <!-- Buttons -->
             <div class="mt-6 flex justify-end gap-2">
                 <RouterLink to="/create-id">
-                    <button @click="generate_new_id()" class="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600">
+                    <button class="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600">
                         Generate new ID
                     </button>
                 </RouterLink>
@@ -63,11 +63,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { current_identity } from '../state.ts';
-import { BadDecryptionError, import_identity } from '../logic/crypto/id.ts';
-import { db } from '../logic/connectors/local-db.ts';
+import { BadDecryptionError, import_owned_identity } from '../logic/crypto/id.ts';
+import { db, load_user_data, update_user_data } from '../logic/connectors/local-db.ts';
 import { toSvg } from 'jdenticon';
 import Select from 'primevue/select';
 import { router } from '../main.ts';
+
 
 
 const selectedID = ref();
@@ -75,20 +76,28 @@ const all_ID_list = ref();
 const passphrase = ref('');
 
 
-function generate_new_id(){
-    // router.push()
-}
-
 async function use_id(){
     if(selectedID.value == undefined) return;
     localStorage.setItem("last_selected_identity", selectedID.value.id);
 
     try{
-        const imported_id = await import_identity(selectedID.value.identity, passphrase.value);
+        const imported_id = await import_owned_identity(selectedID.value.identity, passphrase.value);
 
+        current_identity.db_id = selectedID.value.id;
         current_identity.name = selectedID.value.label;
-        current_identity.id = imported_id;
+        current_identity.userId = imported_id;
         current_identity.identicon = selectedID.value.identicon;
+
+        let user_data = await load_user_data(current_identity.db_id!, current_identity.userId!);
+        if(user_data === null){
+            user_data = {
+                chats: [],
+                settings: {}
+            }
+            update_user_data(current_identity.db_id!, user_data, current_identity.userId);
+        }
+
+        current_identity.user_data = user_data;
     
         router.push('/home')
     }
