@@ -21,7 +21,7 @@ const routes = [
       { path: '/home', component: Home, 
         children: [
           { path: '/newest', component: NewestMessagesPanel},
-          { path: '/chat', component: ChatPanel}
+          { path: '/chat/:id', component: ChatPanel}
         ]
       },
       { path: '/settings', component: Settings}

@@ -13,7 +13,7 @@ export async function resolve_by_name(server: string, name: string) :Promise<any
     if(res.status != 200){
         return null;
     }
-    return res.data;
+    return JSON.parse(atob(res.data[0].user_id));
 }
 
 export async function publish_name_resolution(server: string, name: string, uid :ExportedIdentity) {
@@ -25,7 +25,8 @@ export async function publish_name_resolution(server: string, name: string, uid 
         {
             params: {
                 username: name
-            }
+            },
+            validateStatus: status => true
         }
     );
     return res;

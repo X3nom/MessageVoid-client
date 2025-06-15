@@ -38,35 +38,26 @@
             </MenuItems>
         </Menu>
     </div>
-    <MyIdDialog v-model:is_open="my_id_dialog_open"></MyIdDialog>
+
+    <MyIdDialog 
+        v-model:is_open="my_id_dialog_open"
+    ></MyIdDialog>
 </template>
 
 <script setup lang='ts'>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import MyIdDialog from './dialogs/MyIdDialog.vue';
-
-import { is_blank } from '../logic/utilities/string';
-import { current_identity, current_server } from '../state';
+import { current_identity, current_server, state } from '../state';
 import { ref, type Ref } from 'vue';
 import { router } from '../main';
-import { Tooltip } from 'primevue';
 
 function logout(){
-    current_identity.userId = undefined;
+    state.userId = undefined;
     current_identity.name = undefined;
     current_identity.identicon = undefined;
     router.push('/select-id');
 }
 
-function update_servers_list(){
-    const serv = localStorage.getItem("servers");
-    if(serv !== null) return JSON.parse(serv);
-    return [];
-};
-
 const my_id_dialog_open = ref(false);
-
-const servers :Ref<string[]> = ref([]);
-update_servers_list()
 
 </script>

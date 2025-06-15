@@ -14,10 +14,22 @@
               </DialogTitle>
               <div class="flex flex-col w-full justify-center rounded-lg p-4 backdrop-blur-2xl bg-zinc-800">
                 <h2>Publish name resolution</h2>
+
                 <input v-model="name_resolution_address" :placeholder="'foo&bar.com'"
                   class="p-1 mt-4 mb-4 rounded-lg focus:outline-zinc-500 outline-2 outline-zinc-700">
-                <button :class="['rounded-lg p-1', (address_okay(name_resolution_address))? 'hover:bg-zinc-700' : 'text-zinc-500']"
-                  v-on:click="()=>{if(address_okay(name_resolution_address)) publish_name_clicked()}">publish</button>
+
+                <button :class="['rounded-lg p-1 bg-zinc-900',
+                    (address_okay(name_resolution_address) || name_publish_running)? 'hover:bg-zinc-700' : 'text-zinc-500', 
+                    (name_publish_running)? 'loading-border' : ''
+                  ]"
+                  v-on:click="()=>{if(address_okay(name_resolution_address)) publish_name_clicked()}">
+                  publish
+                </button>
+                <span v-if="address_already_taken"
+                  class="text-center mt-2 rounded-lg bg-amber-700">
+                  This address is already taken!
+                </span>
+
               </div>
               <!-- You sure? dialog window -->
                 <AreYouSure 
@@ -43,7 +55,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import AreYouSure from './AreYouSure.vue';
 import type { RefSymbol } from '@vue/reactivity';
 import { publish_name_resolution } from '../../logic/api/name-resolve-api';
-import { current_identity } from '../../state';
+import { current_identity, state } from '../../state';
 import { export_identity_pub } from '../../logic/crypto/id';
 
 const props = defineProps<{
@@ -60,26 +72,40 @@ function toggleOpen() {
 const are_you_sure_open = ref(false);
 const is_sure = ref(false);
 const name_resolution_address = ref('');
+const name_publish_running = ref(false);
+const address_already_taken = ref(false);
+
 
 function publish_name_clicked(){
   are_you_sure_open.value = true;
-  
+
 }
 watch(are_you_sure_open, async (val, old_val) => {
   if(val == false && old_val == true){
     if(is_sure){
-      if(current_identity.userId?.pub_id == undefined){
+      if(state.userId?.pub_id == undefined){
         is_sure.value = false;
         return
       }
+      name_publish_running.value = true;
+
       let [name, server] = name_resolution_address.value.split('&');
       
       // add protocol specifier to the server (if does not have already)
       server = (server.includes('http://') || server.includes('https://'))? server : 'http://' + server
       
-      await publish_name_resolution(server, name, 
-        await export_identity_pub(current_identity.userId.pub_id)
+      const res = await publish_name_resolution(server, name, 
+        await export_identity_pub(state.userId.pub_id)
       )
+      
+      name_publish_running.value = false;
+
+      address_already_taken.value = false;
+      if(res.status == 409) 
+        address_already_taken.value = true;
+
+      else if(res.status == 200)
+        toggleOpen();
     }
   }
 })

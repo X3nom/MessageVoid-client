@@ -144,16 +144,66 @@ export async function export_identity_pub(identity :UserID) :Promise<ExportedIde
 
 
 
-export async function id_encrypt(content: string, enc_key :CryptoKey) {
-    const data_buff = new TextEncoder().encode(content);
-    const encrypted_buff = await crypto.subtle.encrypt(ENC_KEY_ALGORITHM, enc_key, data_buff);
-    const encrypted_b64 = buffer2Base64(encrypted_buff)
-    return encrypted_b64;
+export async function id_encrypt(content: string, rsaPublicKey: CryptoKey): Promise<string> {
+    // 1. Generate AES key
+    const aesKey = await crypto.subtle.generateKey(
+        { name: "AES-GCM", length: 256 },
+        true,
+        ["encrypt", "decrypt"]
+    );
+
+    // 2. Encrypt content with AES
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit nonce
+    const data = new TextEncoder().encode(content);
+    const encryptedContent = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv },
+        aesKey,
+        data
+    );
+
+    // 3. Export AES key & encrypt with RSA
+    const rawAESKey = await crypto.subtle.exportKey("raw", aesKey);
+    const encryptedAESKey = await crypto.subtle.encrypt(
+        { name: "RSA-OAEP" },
+        rsaPublicKey,
+        rawAESKey
+    );
+
+    // 4. Return all as JSON base64-encoded
+    return JSON.stringify({
+        aes_iv: buffer2Base64(iv),
+        aes_key: buffer2Base64(encryptedAESKey),
+        data: buffer2Base64(encryptedContent)
+    });
 }
 
-export async function id_decrypt(encrypted_b64:string, enc_key :CryptoKey) {
-    const data = bufferFromBase64(encrypted_b64);
-    const decrypted_buff = await crypto.subtle.decrypt(ENC_KEY_ALGORITHM, enc_key, data);
-    const content = new TextDecoder().decode(decrypted_buff);
-    return content;
+export async function id_decrypt(encrypted_json: string, rsaPrivateKey: CryptoKey): Promise<string> {
+    const payload = JSON.parse(encrypted_json);
+    const iv = bufferFromBase64(payload.aes_iv);
+    const encryptedAESKey = bufferFromBase64(payload.aes_key);
+    const encryptedData = bufferFromBase64(payload.data);
+
+    // 1. Decrypt AES key
+    const rawAESKey = await crypto.subtle.decrypt(
+        { name: "RSA-OAEP" },
+        rsaPrivateKey,
+        encryptedAESKey
+    );
+
+    const aesKey = await crypto.subtle.importKey(
+        "raw",
+        rawAESKey,
+        { name: "AES-GCM" },
+        false,
+        ["decrypt"]
+    );
+
+    // 2. Decrypt content
+    const decryptedData = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv },
+        aesKey,
+        encryptedData
+    );
+
+    return new TextDecoder().decode(decryptedData);
 }

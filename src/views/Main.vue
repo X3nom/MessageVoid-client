@@ -3,7 +3,7 @@
     <div class="w-full h-screen flex flex-col bg-zinc-900">
         <MainBar></MainBar>
         
-        <RouterView/>
+        <RouterView :key="$route.fullPath"/>
     </div>
 </template>
 
@@ -15,7 +15,7 @@ import { router } from '../main.ts';
 import { RouterView } from 'vue-router';
 
 // If no identity selected, force the user out
-if(current_identity.userId == undefined){
+if(current_identity.db_id == undefined){
     router.replace('/select-id');
 }
 else{

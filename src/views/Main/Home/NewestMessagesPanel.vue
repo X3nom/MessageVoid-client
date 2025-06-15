@@ -16,14 +16,14 @@
 import { ref } from 'vue';
 import { get_messages } from '../../../logic/api/message-api';
 import { export_identity_pub } from '../../../logic/crypto/id';
-import { current_identity, current_server } from '../../../state';
+import { current_identity, current_server, state } from '../../../state';
 
 
 const messages = ref([]);
 
 async function load_messages(){
     messages.value = await get_messages(current_server.server, 
-        await export_identity_pub(current_identity.userId!.pub_id)
+        await export_identity_pub(state.userId!.pub_id)
     )
 }
 load_messages();

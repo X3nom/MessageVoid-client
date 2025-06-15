@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { current_identity } from '../state.ts';
+import { current_identity, state } from '../state.ts';
 import { BadDecryptionError, import_owned_identity } from '../logic/crypto/id.ts';
 import { db, load_user_data, update_user_data } from '../logic/connectors/local-db.ts';
 import { toSvg } from 'jdenticon';
@@ -85,16 +85,16 @@ async function use_id(){
 
         current_identity.db_id = selectedID.value.id;
         current_identity.name = selectedID.value.label;
-        current_identity.userId = imported_id;
         current_identity.identicon = selectedID.value.identicon;
+        state.userId = imported_id;
 
-        let user_data = await load_user_data(current_identity.db_id!, current_identity.userId!);
+        let user_data = await load_user_data(current_identity.db_id!, state.userId);
         if(user_data === null){
             user_data = {
                 chats: [],
                 settings: {}
             }
-            update_user_data(current_identity.db_id!, user_data, current_identity.userId);
+            update_user_data(current_identity.db_id!, user_data, state.userId);
         }
 
         current_identity.user_data = user_data;
@@ -105,6 +105,7 @@ async function use_id(){
         if(e == BadDecryptionError){ // Wrong password
 
         }
+        console.log("fuck", e)
     }
 
 }
