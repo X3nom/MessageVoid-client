@@ -16,9 +16,10 @@ export const current_identity :Reactive<{
   identicon: undefined,
   user_data: undefined
 });  
-export const state :{userId :OwnedUserID|undefined}= {
+export const state :{userId :OwnedUserID|undefined, sse_running :boolean}= {
   // this bitch is not reactive because apparently crypto.subtle is picky about keys
-  userId: undefined
+  userId: undefined,
+  sse_running: false
 }
 
 export const reactive_state = reactive({
