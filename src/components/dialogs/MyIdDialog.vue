@@ -55,16 +55,23 @@
                 </div>
                 <div class="flex flex-col w-full justify-center rounded-lg p-4 backdrop-blur-2xl bg-zinc-800">
                   <h2>Delete this UserID</h2>
-                  <button class="p-1 mt-2 rounded-lg bg-red-900 hover:bg-red-500">delete id</button>
+                  <button class="p-1 mt-2 rounded-lg bg-red-900 hover:bg-red-500" v-on:click="delete_are_you_sure_open=true">delete id</button>
                 </div>
               </div>
-              <!-- You sure? dialog window -->
+              <!-- PUBLISH (you sure?) -->
                 <AreYouSure 
                   message="Do you really want to publish the name resolution?"
-                  v-model:is_open="are_you_sure_open"
-                  v-model:is_sure="is_sure"
+                  v-model:is_open="publish_are_you_sure_open"
+                  v-model:is_sure="publish_is_sure"
                 ></AreYouSure>
-              <!-- Dialog window -->
+              <!-- DELETE (you sure?) -->
+                <AreYouSure 
+                  message="Do you really want to delete this UserID? You will loose your access keys together with all conversations!"
+                  :confirm_text="current_identity.name"
+                  v-model:is_open="delete_are_you_sure_open"
+                  v-model:is_sure="delete_is_sure"
+                ></AreYouSure>
+              <!-- Dialog windows -->
             </DialogPanel>
           </TransitionChild>
         </div>
@@ -88,6 +95,7 @@ import { db } from '../../logic/connectors/local-db';
 import { passwd_decrypt, passwd_encrypt } from '../../logic/crypto/passwd-encrypt';
 import type { ExportedPasswdEncryptedData } from '../../schema/export/passwd-encrypt';
 import type { ExportedOwnedIdentity } from '../../schema/export/id';
+import { router } from '../../main';
 
 const props = defineProps<{
   is_open: boolean
@@ -100,8 +108,13 @@ function toggleOpen() {
   emit('update:is_open', !props.is_open);
 }
 
-const are_you_sure_open = ref(false);
-const is_sure = ref(false);
+const publish_are_you_sure_open = ref(false);
+const publish_is_sure = ref(false);
+
+const delete_are_you_sure_open = ref(false);
+const delete_is_sure = ref(false);
+
+
 const name_resolution_address = ref('');
 const name_publish_running = ref(false);
 const address_already_taken = ref(false);
@@ -114,14 +127,14 @@ const new_password_2 = ref('');
 
 
 function publish_name_clicked(){
-  are_you_sure_open.value = true;
+  publish_are_you_sure_open.value = true;
 
 }
-watch(are_you_sure_open, async (val, old_val) => {
+watch(publish_are_you_sure_open, async (val, old_val) => {
   if(val == false && old_val == true){
-    if(is_sure){
+    if(publish_is_sure){
       if(state.userId?.pub_id == undefined){
-        is_sure.value = false;
+        publish_is_sure.value = false;
         return
       }
       name_publish_running.value = true;
@@ -175,5 +188,18 @@ async function apply_passwd_change(){
     console.log("passwd change failed", e);
   }
 }
+
+
+watch(delete_are_you_sure_open, async (val, old_val) => {
+  if(val == false && old_val == true){
+    if(delete_is_sure.value){
+      // no going back now
+      db.identities.delete(current_identity.db_id!);
+      db.user_data.delete(current_identity.db_id!);
+
+      router.push('/select-id')
+    }
+  }
+})
 
 </script>

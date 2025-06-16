@@ -39,7 +39,7 @@ function all_messages_by_time(){
     }
 
     // sort by sent time
-    all_msg.sort((a, b) => a.send_time + b.send_time)
+    all_msg.sort((a, b) => b.send_time - a.send_time);
 
     return all_msg;
 }

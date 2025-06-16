@@ -8,6 +8,22 @@ html {
 }
 
 
+/* ----- Stylish Chrome scrollbar ----- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-zinc-700); /* or any subtle color */
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+/* ----------------------------- */
+
 
 
 /* loading border ========================================== */
