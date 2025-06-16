@@ -1,8 +1,8 @@
 import type { ExportedIdentity } from "../../schema/export/id";
 import type { ExportedMessage } from "../../schema/export/message";
-import type { IdEncryptedData, UserID } from "../../schema/inner/id";
+import type { IdEncryptedData } from "../../schema/inner/id";
 import type { Message_enc_data, Message } from "../../schema/inner/message";
-import { current_identity, state } from "../../state";
+import { state } from "../../state";
 import { export_identity_pub, id_decrypt, id_encrypt, import_identity } from "./id";
 
 

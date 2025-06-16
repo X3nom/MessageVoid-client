@@ -1,4 +1,3 @@
-import type { ExportedIdentity } from "./id";
 
 export interface ExportedMessage{
     recipient: string; // ExportedIdentity

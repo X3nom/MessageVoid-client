@@ -1,4 +1,3 @@
-import type { UserID } from "./id";
 import { type ExportedIdentity } from '../export/id';
 
 

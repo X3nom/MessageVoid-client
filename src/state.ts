@@ -1,6 +1,6 @@
 import { reactive, type Reactive } from 'vue'
 import { type OwnedUserID } from './schema/inner/id';
-import type { InnerUserDataEntry, UserDataEntry } from './schema/db';
+import type { InnerUserDataEntry } from './schema/db';
 
 
 

@@ -50,7 +50,6 @@ import type { UserID } from '../../../schema/inner/id';
 import { toSvg } from 'jdenticon/standalone';
 import { build_message } from '../../../logic/crypto/message';
 import { send_message } from '../../../logic/api/message-api';
-import { state } from '../../../state';
 import EditContactDialog from '../../../components/dialogs/EditContactDialog.vue';
 
 onMounted(()=>{
@@ -70,6 +69,7 @@ const current_chat_identicon = toSvg(JSON.stringify(current_chat.userId), 40);
 
 
 let recipient_uid :UserID|undefined = undefined;
+recipient_uid // make TS shut up, it might get used in future? Idk why it's here to be honest :)
 import_identity(JSON.parse(JSON.stringify(current_identity.user_data!.chats[id].userId)))
     .then((val)=>{recipient_uid = val})
 
@@ -97,6 +97,7 @@ async function send_message_triggered(){
     
     try{
         const res = send_message(reactive_state.server, new_msg);
+        res; // shut up TS
          
         current_chat.messages.push({
             text: my_new_message.value, 

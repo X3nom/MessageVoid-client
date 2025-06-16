@@ -37,7 +37,7 @@
 </template>
 <script setup lang="ts">
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { current_identity, state } from '../../state';
 import { update_user_data } from '../../logic/connectors/local-db';
 

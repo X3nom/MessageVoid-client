@@ -26,7 +26,7 @@ export async function publish_name_resolution(server: string, name: string, uid 
             params: {
                 username: name
             },
-            validateStatus: status => true
+            validateStatus: _status => true
         }
     );
     return res;

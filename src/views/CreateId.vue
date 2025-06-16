@@ -42,10 +42,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { router } from '../main.ts';
-import { generate_new_identity } from '../logic/crypto/id.ts'
-import { db } from '../logic/connectors/local-db.ts';
-import { passwd_encrypt } from '../logic/crypto/passwd-encrypt.ts';
+import { router } from '../main';
+import { generate_new_identity } from '../logic/crypto/id'
+import { db } from '../logic/connectors/local-db';
 
 const passphrase = ref('');
 const username = ref('');

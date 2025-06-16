@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import AddContactDialog from './dialogs/AddContactDialog.vue';
 import { current_identity } from '../state';
 import { toSvg } from 'jdenticon/standalone';

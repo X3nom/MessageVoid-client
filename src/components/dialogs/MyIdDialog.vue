@@ -84,10 +84,9 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import AreYouSure from './AreYouSure.vue';
-import type { RefSymbol } from '@vue/reactivity';
 import { publish_name_resolution } from '../../logic/api/name-resolve-api';
 import { current_identity, state } from '../../state';
 import { export_identity_pub } from '../../logic/crypto/id';

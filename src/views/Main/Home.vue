@@ -8,10 +8,10 @@
 
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeUnmount } from 'vue';
 import MainSideBar from '../../components/MainSideBar.vue';
 import { RouterView } from 'vue-router';
-import axios from 'axios';
+// import axios from 'axios';
 import { get_and_save_messages } from '../../logic/api/message-api';
 import { reactive_state, state } from '../../state';
 import { export_identity_pub } from '../../logic/crypto/id';

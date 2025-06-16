@@ -48,7 +48,7 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import MyIdDialog from './dialogs/MyIdDialog.vue';
 import { current_identity, reactive_state, state } from '../state';
-import { ref, type Ref } from 'vue';
+import { ref } from 'vue';
 import { router } from '../main';
 
 function logout(){
