@@ -5,7 +5,7 @@
                 <RouterLink to="/newest">
                     <div class="w-full rounded-t-lg text-center p-1 flex justify-around hover:bg-zinc-500">
                         <div class="w-full"><span>Inbox</span></div>
-                        <div class="w-full text-zinc-400"><span>[0]</span></div>
+                        <div class="w-full text-zinc-400"><span></span></div>
                     </div>
                 </RouterLink>
                 <div class="border border-zinc-600"></div>

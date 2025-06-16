@@ -21,6 +21,6 @@ export const state :{userId :OwnedUserID|undefined}= {
   userId: undefined
 }
 
-export const current_server = reactive({
+export const reactive_state = reactive({
   server: "http://kuba-kubikula.slavetraders.tech" // TODO: make non hard coded
 });

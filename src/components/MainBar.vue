@@ -3,7 +3,7 @@
 
         <div class="p-3 pl-1 pt-1 pb-1 w-[256pt] text-nowrap overflow-clip rounded-lg bg-zinc-800 flex items-center">
             <div class="rounded-lg bg-green-500 w-1 h-1 p-1 m-1"></div>
-            <span :title="current_server.server">{{current_server.server.split('://')[1]}}</span>
+            <span :title="reactive_state.server">{{reactive_state.server.split('://')[1]}}</span>
         </div>
 
         
@@ -47,7 +47,7 @@
 <script setup lang='ts'>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import MyIdDialog from './dialogs/MyIdDialog.vue';
-import { current_identity, current_server, state } from '../state';
+import { current_identity, reactive_state, state } from '../state';
 import { ref, type Ref } from 'vue';
 import { router } from '../main';
 

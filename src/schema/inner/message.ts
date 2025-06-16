@@ -1,18 +1,18 @@
 import type { UserID } from "./id";
+import { type ExportedIdentity } from '../export/id';
 
-
-export interface Message{
-    recipient: UserID;
-    send_time: number;
-    enc_key: string;
-    sender_enc_key: string;
-    enc_data: string;
-};
 
 // encrypted part of public message
 export interface Message_enc_data{
-    sender: UserID;
+    sender: ExportedIdentity;
     message: string;
     signature: string;
 };
 
+
+
+export interface Message{
+    send_time: number;
+    message: string,
+    sender: ExportedIdentity
+};

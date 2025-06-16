@@ -26,7 +26,7 @@ export const db = new IdentitiesDB();
 export async function load_user_data(db_id :number, userid :OwnedUserID){
   const record = await db.user_data.get(db_id);
   if(!record) return undefined;
-  if(record.inner_data == "") return null;
+  if(record.inner_data == null) return null;
   const data :InnerUserDataEntry = JSON.parse(await id_decrypt(record.inner_data, userid.priv_id.enc_key));
   return data;
 }

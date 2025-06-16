@@ -1,6 +1,5 @@
 import type { ExportedIdentity, ExportedOwnedIdentity } from "./export/id";
-import type { ExportedPasswdEncryptedData } from "./export/passwd-encrypt";
-import { type Message } from './inner/message';
+import type { IdEncryptedData } from "./inner/id";
 
 export interface IdentityEntry {
   id?: number; // optional because it's autoIncrement
@@ -10,7 +9,7 @@ export interface IdentityEntry {
 
 export interface UserDataEntry {
   id?: number;
-  inner_data: string
+  inner_data: IdEncryptedData | null
 }
 
 

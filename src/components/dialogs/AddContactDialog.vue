@@ -77,6 +77,8 @@ async function resolve(address: string){
         await update_user_data(current_identity.db_id!, current_identity.user_data!, state.userId!);
 
         resolve_running.value = false;
+
+        toggleOpen();
     }
     catch{
         resolve_running.value = false;

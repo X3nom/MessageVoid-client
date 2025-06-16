@@ -66,7 +66,7 @@ async function generate(){
     const entry_id = await db.identities.add({label: username.value, identity: encrypted_id});
     await db.user_data.put({
         id: entry_id,
-        inner_data: ""
+        inner_data: null
     })
 
     generate_running.value = false;

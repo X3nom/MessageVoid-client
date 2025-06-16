@@ -4,7 +4,7 @@ import type { ExportedMessage } from "../../schema/export/message";
 
 
 
-export async function get_messages(server: string, uid: ExportedIdentity) :Promise<any | null>{
+export async function get_messages(server: string, uid: ExportedIdentity) :Promise<ExportedMessage[] | null>{
     const res = await axios.get(server + '/message', {
         params: {
             recipient: btoa(JSON.stringify(uid))
@@ -20,7 +20,10 @@ export async function get_messages(server: string, uid: ExportedIdentity) :Promi
 export async function send_message(server: string, message: ExportedMessage) {
     const res = await axios.post(
         server + '/message',
-        
+        message,
+        {
+
+        }
     );
     return res;
 }

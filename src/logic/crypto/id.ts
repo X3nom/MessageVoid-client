@@ -1,5 +1,5 @@
 import { type ExportedIdentity, type ExportedOwnedIdentity } from "../../schema/export/id";
-import { type OwnedUserID, type UserID } from '../../schema/inner/id';
+import { type IdEncryptedData, type OwnedUserID, type UserID } from '../../schema/inner/id';
 import { passwd_encrypt, passwd_decrypt } from "./passwd-encrypt";
 import { type ExportedPasswdEncryptedData } from '../../schema/export/passwd-encrypt';
 import { buffer2Base64, bufferFromBase64 } from '../utilities/buffer2Base64';
@@ -82,17 +82,18 @@ async function decrypt_identity(encrypted_id :ExportedOwnedIdentity, passphrase 
 
 
 export async function import_identity(exported_id :ExportedIdentity) {
+    console.log("import meow", exported_id);
     const imported_id :UserID = {
         // public encryption key
         enc_key: await crypto.subtle.importKey(
-            'jwk', 
-            (exported_id.enc as {enc: JsonWebKey, sign: JsonWebKey}).enc,
+            'jwk',
+            exported_id.enc,
             ENC_KEY_ALGORITHM, true, ['encrypt']
         ),
         // public signature key
         sign_key: await crypto.subtle.importKey(
             'jwk', 
-            (exported_id.sign as {enc: JsonWebKey, sign: JsonWebKey}).sign,
+            exported_id.sign,
             SIGN_KEY_ALGORITM, true, ['verify']
         )
     }
@@ -144,7 +145,7 @@ export async function export_identity_pub(identity :UserID) :Promise<ExportedIde
 
 
 
-export async function id_encrypt(content: string, rsaPublicKey: CryptoKey): Promise<string> {
+export async function id_encrypt(content: string, rsaPublicKey: CryptoKey): Promise<IdEncryptedData> {
     // 1. Generate AES key
     const aesKey = await crypto.subtle.generateKey(
         { name: "AES-GCM", length: 256 },
@@ -170,15 +171,15 @@ export async function id_encrypt(content: string, rsaPublicKey: CryptoKey): Prom
     );
 
     // 4. Return all as JSON base64-encoded
-    return JSON.stringify({
+    return {
         aes_iv: buffer2Base64(iv),
         aes_key: buffer2Base64(encryptedAESKey),
         data: buffer2Base64(encryptedContent)
-    });
+    };
 }
 
-export async function id_decrypt(encrypted_json: string, rsaPrivateKey: CryptoKey): Promise<string> {
-    const payload = JSON.parse(encrypted_json);
+export async function id_decrypt(encrypted: IdEncryptedData, rsaPrivateKey: CryptoKey): Promise<string> {
+    const payload = encrypted;
     const iv = bufferFromBase64(payload.aes_iv);
     const encryptedAESKey = bufferFromBase64(payload.aes_key);
     const encryptedData = bufferFromBase64(payload.data);

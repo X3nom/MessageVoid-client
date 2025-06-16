@@ -10,3 +10,9 @@ export interface OwnedUserID{
     pub_id: UserID;
 };
 
+
+export interface IdEncryptedData{
+    aes_iv: string;
+    aes_key: string;
+    data: string;
+}
