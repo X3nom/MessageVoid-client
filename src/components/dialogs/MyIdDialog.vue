@@ -141,7 +141,7 @@ watch(publish_are_you_sure_open, async (val, old_val) => {
       let [name, server] = name_resolution_address.value.split('&');
       
       // add protocol specifier to the server (if does not have already)
-      server = (server.includes('http://') || server.includes('https://'))? server : 'http://' + server
+      server = (server.includes('http://') || server.includes('https://'))? server : 'https://' + server
       
       const res = await publish_name_resolution(server, name, 
         await export_identity_pub(state.userId.pub_id)

@@ -23,5 +23,5 @@ export const state :{userId :OwnedUserID|undefined, sse_running :boolean}= {
 }
 
 export const reactive_state = reactive({
-  server: "http://kuba-kubikula.slavetraders.tech" // TODO: make non hard coded
+  server: "https://kuba-kubikula.slavetraders.tech" // TODO: make non hard coded
 });

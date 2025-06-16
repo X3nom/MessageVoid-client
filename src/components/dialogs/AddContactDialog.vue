@@ -58,7 +58,7 @@ async function resolve(address: string){
 
     try{
         let [name, server] = address.split('&');
-        server = (server.includes('http://') || server.includes('https://'))? server : 'http://' + server
+        server = (server.includes('http://') || server.includes('https://'))? server : 'https://' + server
         const userid = await resolve_by_name(server, name);
         
         if(current_identity.user_data?.chats.filter((chat) => {
