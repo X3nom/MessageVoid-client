@@ -34,34 +34,36 @@
             </Select>
             </div>
 
-
-            <!-- Input for passphrase -->
-            <input v-model="passphrase" type="password" placeholder="Enter passphrase"
-                v-on:keydown.enter="use_id()"
-                class="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" />
-
-
-            <!-- Buttons -->
-            <div class="mt-6 flex justify-end gap-2">
-                <RouterLink to="/create-id">
-                    <button class="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600">
-                        Generate new ID
+            <div class="flex flex-col space-y-2">
+                <!-- Input for passphrase -->
+                <input v-model="passphrase" type="password" placeholder="Enter password"
+                    v-on:keydown.enter="use_id()"
+                    class="w-full px-4 py-2 border border-zinc-500 rounded-lg focus:outline-none focus:border-zinc-400" />
+                
+                <span v-if="wrong_password_shown" class="w-full rounded-lg text-center bg-amber-700">invalid password</span>
+    
+                <!-- Buttons -->
+                <div class="flex justify-end gap-2">
+                    <RouterLink to="/create-id">
+                        <button class="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600">
+                            Generate new ID
+                        </button>
+                    </RouterLink>
+                    <button @click="use_id()"
+                        :class="[
+                            'px-4 py-2 rounded-lg',
+                            (selectedID == undefined) ? 'bg-zinc-600 text-zinc-400' : 'bg-zinc-700 hover:bg-zinc-600',
+                        ]">
+                        Use this ID
                     </button>
-                </RouterLink>
-                <button @click="use_id()"
-                    :class="[
-                        'px-4 py-2 rounded-lg',
-                        (selectedID == undefined) ? 'bg-zinc-600 text-zinc-400' : 'bg-zinc-700 hover:bg-zinc-600',
-                    ]">
-                    Use this ID
-                </button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { current_identity, state } from '../state.ts';
 import { BadDecryptionError, import_owned_identity } from '../logic/crypto/id.ts';
 import { db, load_user_data, update_user_data } from '../logic/connectors/local-db.ts';
@@ -74,6 +76,10 @@ import { router } from '../main.ts';
 const selectedID = ref();
 const all_ID_list = ref();
 const passphrase = ref('');
+
+const wrong_password_shown = ref(false);
+
+watch(selectedID, ()=>wrong_password_shown.value=false);
 
 
 async function use_id(){
@@ -103,9 +109,8 @@ async function use_id(){
     }
     catch(e){
         if(e == BadDecryptionError){ // Wrong password
-
+            wrong_password_shown.value = true;
         }
-        console.log("fuck", e)
     }
 
 }

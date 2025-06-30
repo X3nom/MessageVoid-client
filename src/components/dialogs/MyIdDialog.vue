@@ -51,7 +51,11 @@
                 </div>
                 <div class="flex flex-col w-full justify-center rounded-lg p-4 backdrop-blur-2xl bg-zinc-800">
                   <h2>Export this UserID <em>(not working)</em></h2>
-                  <button class="p-1 mt-2 rounded-lg bg-zinc-900 hover:bg-zinc-600">export</button>
+                  <div class="w-fit p-2 rounded-lg bg-zinc-700">
+                    <input type="checkbox" class="w-4 h-4 m-1 rounded-sm appearance-none bg-zinc-900 checked:bg-amber-700 focus:ring-amber-700">
+                    <span class="text-zinc-300">full profile</span>
+                  </div>
+                  <button class="p-1 mt-2 rounded-lg bg-zinc-900 hover:bg-zinc-600" v-on:click="export_id_clicked()">export</button>
                 </div>
                 <div class="flex flex-col w-full justify-center rounded-lg p-4 backdrop-blur-2xl bg-zinc-800">
                   <h2>Delete this UserID</h2>
@@ -200,5 +204,9 @@ watch(delete_are_you_sure_open, async (val, old_val) => {
     }
   }
 })
+
+function export_id_clicked(){
+
+}
 
 </script>
